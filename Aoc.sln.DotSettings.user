@@ -1,9 +1,0 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bdae7cf3_002Dbfa7_002D451c_002Da67b_002D425dc0f97925/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="SolvePart1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;xUnit::5591B011-5A09-4865-91B6-967709FDCE35::net10.0::Aoc.Tests._2024.Day01Tets.SolvePart1&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::5591B011-5A09-4865-91B6-967709FDCE35::net10.0::Aoc.Tests._2025.Day01Tets.SolvePart1&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::5591B011-5A09-4865-91B6-967709FDCE35::net10.0::Aoc.Tests._2025.Day01Tets&lt;/TestId&gt;
-    &lt;TestId&gt;xUnit::5591B011-5A09-4865-91B6-967709FDCE35::net10.0::Aoc.Tests._2024.Day01Tets.SolvePart2&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
