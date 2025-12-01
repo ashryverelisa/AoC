@@ -47,9 +47,9 @@ public sealed class RunCommand : ICommand
         }
     }
 
-    private static string LoadInput(int year, int day)
+    private static string[] LoadInput(int year, int day)
     {
         var inputPath = Path.Combine("inputs", year.ToString(), $"{day}.txt");
-        return !File.Exists(inputPath) ? throw new CommandException($"Input file not found at '{inputPath}'.") : File.ReadAllText(inputPath);
+        return !File.Exists(inputPath) ? throw new CommandException($"Input file not found at '{inputPath}'.") : File.ReadAllLines(inputPath);
     }
 }

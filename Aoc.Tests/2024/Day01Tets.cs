@@ -9,7 +9,8 @@ public class Day01Tets
     [Fact]
     public void SolvePart1()
     {
-        var solvePart1 = _solution.SolvePart1($"{AppContext.BaseDirectory}/inputs/2024/Day01.txt");
+        var input = File.ReadAllLines($"{AppContext.BaseDirectory}/inputs/2024/Day01.txt");
+        var solvePart1 = _solution.SolvePart1(input);
         solvePart1.Should().Be("11");
     }
 }
