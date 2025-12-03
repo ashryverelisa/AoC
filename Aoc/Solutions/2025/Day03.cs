@@ -50,8 +50,6 @@ public sealed class Day03 : IAocSolution
             stack[stackSize++] = digit;
         }
 
-        stackSize -= removalsRemaining;
-
         long value = 0;
         for (var index = 0; index < selectionLength; index++)
         {
