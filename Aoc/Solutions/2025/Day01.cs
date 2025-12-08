@@ -1,128 +1,111 @@
+using System.Runtime.CompilerServices;
+
 namespace Aoc.Solutions._2025;
 
 public sealed class Day01 : IAocSolution
 {
     private const int DialSize = 100;
     private const int StartPoint = 50;
-    
+
     public string SolvePart1(string[] input)
     {
-        var zeroHits = CountZeroHits(input, StartPoint);
+        var position = StartPoint;
+        var zeroHits = 0;
+
+        foreach (var line in input)
+        {
+            ProcessLine(line.AsSpan(), ref position, ref zeroHits, countIntermediate: false);
+        }
+
         return zeroHits.ToString();
     }
 
     public string SolvePart2(string[] input)
     {
-        var zeroHits = CountZeroHits(input, StartPoint, true);
+        var position = StartPoint;
+        var zeroHits = 0;
+
+        foreach (var line in input)
+        {
+            ProcessLine(line.AsSpan(), ref position, ref zeroHits, countIntermediate: true);
+        }
+
         return zeroHits.ToString();
     }
 
-    private int CountZeroHits(string[] input, int startPoint, bool countIntermediate = false)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void ProcessLine(ReadOnlySpan<char> line, ref int position, ref int zeroHits, bool countIntermediate)
     {
-        var position = WrapDial(startPoint);
-        var zeroHits = 0;
-
-        foreach (var rotation in ParseRotations(input))
+        while (!line.IsEmpty)
         {
-            if (countIntermediate)
-            {
-                zeroHits += CountIntermediateZeroHits(position, rotation);
-            }
+            var start = 0;
+            while (start < line.Length && char.IsWhiteSpace(line[start]))
+                start++;
 
-            position = ApplyRotation(position, rotation);
+            if (start >= line.Length)
+                break;
 
-            if (!countIntermediate && position == 0)
-            {
-                zeroHits++;
-            }
+            line = line[start..];
+
+            var end = 0;
+            while (end < line.Length && !char.IsWhiteSpace(line[end]))
+                end++;
+
+            var token = line[..end];
+            line = line[end..];
+
+            ProcessToken(token, ref position, ref zeroHits, countIntermediate);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void ProcessToken(ReadOnlySpan<char> token, ref int position, ref int zeroHits, bool countIntermediate)
+    {
+        if (token.Length < 2)
+            return;
+
+        var dirChar = token[0];
+        var direction = (dirChar | 0x20) == 'l' ? -1 : 1;
+
+        if (!int.TryParse(token[1..], out var amount) || amount < 0)
+            return;
+
+        if (countIntermediate)
+        {
+            zeroHits += CountIntermediateZeroHits(position, direction, amount);
         }
 
-        return zeroHits;
+        position = WrapDial(position + direction * amount);
+
+        if (!countIntermediate && position == 0)
+        {
+            zeroHits++;
+        }
     }
 
-    private int ApplyRotation(int current, Rotation rotation)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int CountIntermediateZeroHits(int start, int direction, int amount)
     {
-        var steps = rotation.Direction switch
-        {
-            'L' => -rotation.Amount,
-            'R' => rotation.Amount,
-            _ => throw new InvalidDataException($"Unsupported direction '{rotation.Direction}'.")
-        };
-
-        return WrapDial(current + steps);
-    }
-
-    private static int CountIntermediateZeroHits(int start, Rotation rotation)
-    {
-        if (rotation.Amount == 0)
-        {
+        if (amount == 0)
             return 0;
-        }
 
-        var firstHitDistance = rotation.Direction switch
-        {
-            'L' => start % DialSize,
-            'R' => (DialSize - start) % DialSize,
-            _ => throw new InvalidDataException($"Unsupported direction '{rotation.Direction}'.")
-        };
+        var firstHitDistance = direction < 0
+            ? start                         
+            : (DialSize - start) % DialSize;
 
         if (firstHitDistance == 0)
-        {
             firstHitDistance = DialSize;
-        }
 
-        if (rotation.Amount < firstHitDistance)
-        {
+        if (amount < firstHitDistance)
             return 0;
-        }
 
-        return 1 + (rotation.Amount - firstHitDistance) / DialSize;
+        return 1 + (amount - firstHitDistance) / DialSize;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int WrapDial(int value)
     {
         var wrapped = value % DialSize;
         return wrapped < 0 ? wrapped + DialSize : wrapped;
     }
-
-    private static IEnumerable<Rotation> ParseRotations(string[] input)
-    {
-        foreach (var line in input)
-        {
-            if (string.IsNullOrWhiteSpace(line))
-            {
-                continue;
-            }
-
-            var tokens = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            foreach (var token in tokens)
-            {
-                yield return ParseRotation(token);
-            }
-        }
-    }
-
-    private static Rotation ParseRotation(string token)
-    {
-        var trimmed = token.Trim();
-        if (trimmed.Length < 2)
-        {
-            throw new InvalidDataException($"Rotation token '{token}' is too short.");
-        }
-
-        var direction = char.ToUpperInvariant(trimmed[0]);
-        if (direction is not ('L' or 'R'))
-        {
-            throw new InvalidDataException($"Unknown rotation direction '{direction}'.");
-        }
-
-        if (!int.TryParse(trimmed.AsSpan(1), out var amount) || amount < 0)
-        {
-            throw new InvalidDataException($"Rotation token '{token}' has an invalid amount.");
-        }
-
-        return new Rotation(direction, amount);
-    }
-
-    private readonly record struct Rotation(char Direction, int Amount);
 }
